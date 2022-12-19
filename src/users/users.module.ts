@@ -7,5 +7,6 @@ import { UserRepository } from './infrasturcture';
   controllers: [UsersController],
   providers: [UsersService, UserRepository],
   imports: [],
+  exports: [UsersService],
 })
 export class UsersModule {}
