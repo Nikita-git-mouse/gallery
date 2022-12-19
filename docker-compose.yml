@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - ${POSTGRES_PORT:?err}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - POSTGRES_PORT=${POSTGRES_PORT:?err}
+      - POSTGRES_HOST=${POSTGRES_HOST:?err}
+    volumes:
+      - './volumes/postgres:/var/lib/postgresql'
