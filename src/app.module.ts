@@ -1,10 +1,16 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users';
+import { JwtModule } from '@nestjs/jwt';
 
+import { UsersModule } from './users';
 import { ConfigInterface, loaders } from '../config';
 import { PermissionsModule } from './permissions/permissions.module';
+import { AuthModule } from './auth';
+import { UserEntity } from './users/infrasturcture/entities';
+import { AuthEntity } from './auth/infrasturcture/entities';
+import { JwtMiddleware } from './auth/infrasturcture';
+import { RefreshJwtMiddleware } from './auth/infrasturcture/middlewares/refresh-jwt.middleware';
 
 @Module({
   imports: [
@@ -17,12 +23,12 @@ import { PermissionsModule } from './permissions/permissions.module';
         const { host, password, port, username } = config.get('postgres');
 
         return {
-          // synchronize: true,
+          synchronize: true,
           port,
           host,
           type: 'postgres',
           migrations: [],
-          entities: ['**/entities/*.entity.js'],
+          entities: [UserEntity, AuthEntity],
           username,
           password,
         };
@@ -31,6 +37,13 @@ import { PermissionsModule } from './permissions/permissions.module';
     }),
     UsersModule,
     PermissionsModule,
+    AuthModule,
+    JwtModule,
   ],
+  providers: [JwtMiddleware],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware, RefreshJwtMiddleware).forRoutes('*');
+  }
+}

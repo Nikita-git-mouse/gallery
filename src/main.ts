@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { ConfigInterface } from '../config';
 import { AppModule } from './app.module';
@@ -17,6 +18,10 @@ async function bootstrap() {
     AppModule,
     new ExpressAdapter(requestListener),
   );
+
+  app.use(cookieParser());
+
+  app.setGlobalPrefix('/api');
 
   // cors
   app.enableCors();

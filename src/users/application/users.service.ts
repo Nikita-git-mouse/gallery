@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../infrasturcture/repositories';
 
 import { CreateUserParams, CreateUserResult } from './users-service.types';
-import { Roles } from '../core';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +10,6 @@ export class UsersService {
   async createUser(params: CreateUserParams): Promise<CreateUserResult> {
     const newUser = this.usersRepository.create({
       ...params,
-      role: Roles.User,
     });
 
     const user = await this.usersRepository.save(newUser);
@@ -20,15 +18,15 @@ export class UsersService {
     };
   }
 
-  findAll(): Promise<any[]> {
-    return this.usersRepository.find();
-  }
+  // findAll(): Promise<any[]> {
+  //   return this.usersRepository.find();
+  // }
 
-  findOne(id): Promise<any> {
-    return this.usersRepository.findOneBy({ id });
-  }
+  // findOne(id): Promise<any> {
+  //   return this.usersRepository.findOneBy({ id });
+  // }
 
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
-  }
+  // async remove(id: number): Promise<void> {
+  //   await this.usersRepository.delete(id);
+  // }
 }

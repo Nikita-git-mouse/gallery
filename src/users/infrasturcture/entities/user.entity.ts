@@ -1,25 +1,23 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IUser } from '../../domain';
-import { Roles } from '../../core';
 
-
-@Entity({name: 'user'})
+@Entity()
 export class UserEntity implements IUser {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({default: ''})
-    banReason: string;
+  @Column({ nullable: false, unique: true })
+  email: string;
 
-    @Column({default: false})
-    banned: boolean;
+  @Column({ nullable: false })
+  name: string;
 
-    @Column()
-    email: string;
+  @Column({ nullable: false })
+  surname: string;
 
-    @Column()
-    password: string;
+  @Column({ nullable: false })
+  middleName: string;
 
-    @Column({  enum: Roles })
-    role: Roles;
+  @Column({ default: '' })
+  profileUri: string;
 }

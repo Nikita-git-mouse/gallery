@@ -1,10 +1,7 @@
-import {IUser} from "../domain";
+import { IUser } from '../domain';
 
-export interface CreateUserParams {
-    email: string;
-    password: string;
-}
+export type CreateUserParams = Omit<IUser, 'id' | 'profileUri'>;
 
-export interface  CreateUserResult {
-    data: IUser;
+export interface CreateUserResult {
+  data: IUser;
 }
