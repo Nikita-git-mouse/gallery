@@ -1,12 +1,22 @@
 import { ValidationPipe } from '@nestjs/common';
+import * as express from 'express';
+import * as https from 'https';
+import * as http from 'http';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
 import { ConfigInterface } from '../config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const requestListener = express();
+
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(requestListener),
+  );
 
   // cors
   app.enableCors();
@@ -29,13 +39,25 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, builder);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('/docs', app, document);
+
+  await app.init();
 
   const configService = app.get<ConfigService<ConfigInterface>>(ConfigService);
-  const { host, port } = configService.get('app');
+  const { host, port, ssl, protocol } = configService.get('app');
 
-  await app.listen(port, host);
+  let server: http.Server;
+  if (protocol === 'https') {
+    server = https.createServer(
+      { ...ssl, passphrase: 'my secret' },
+      requestListener,
+    );
+  } else {
+    server = http.createServer(requestListener);
+  }
 
-  console.log(`Server listens to ${await app.getUrl()}`);
+  server.listen(port, host, () => {
+    console.log(`Server listens to ${protocol}://${host}:${port}`);
+  });
 }
 bootstrap();
