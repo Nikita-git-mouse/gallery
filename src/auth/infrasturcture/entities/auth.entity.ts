@@ -19,6 +19,9 @@ export class AuthEntity implements IAuth {
   @JoinColumn()
   user: UserEntity;
 
+  @Column({ default: false })
+  isActivated: boolean;
+
   @Column({ nullable: false })
   password: string;
 

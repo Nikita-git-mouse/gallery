@@ -1,5 +1,14 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
 import { AuthService } from '../application';
@@ -17,15 +26,19 @@ export class AuthController {
     @Body() input: UserSignUpInput,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const { data } = await this.authService.signUp(input);
+    await this.authService.signUp(input);
 
-    const { accessToken, refreshToken } = data;
+    // const { accessToken, refreshToken } = data;
 
-    this.setRefreshToken(response, refreshToken);
+    // this.setRefreshToken(response, refreshToken);
+  }
 
-    return {
-      accessToken,
-    };
+  @ApiExcludeEndpoint()
+  @Get('/verify')
+  async verifyEmail(@Query('token') token: string) {
+    await this.authService.verifyEmail({ token });
+
+    return;
   }
 
   @Post('/sign-in')
@@ -46,10 +59,15 @@ export class AuthController {
 
   @Post('/sign-out')
   @UseGuards(RefreshTokenGuard)
-  async signOut(@Req() request: Request) {
+  async signOut(
+    @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
+  ) {
     const { id } = request.refresh;
 
-    return this.authService.signOut({ userId: id });
+    await this.authService.signOut({ userId: id });
+
+    this.clearRefreshToken(response);
   }
 
   @Post('/refresh')
@@ -75,7 +93,7 @@ export class AuthController {
     response.cookie(REFRESH_TOKEN_COOKIE_NAME_TOKEN, refreshToken);
   }
 
-  private clearRefreshToken(response: Response, refreshToken: string) {
+  private clearRefreshToken(response: Response) {
     response.clearCookie(REFRESH_TOKEN_COOKIE_NAME_TOKEN);
   }
 }

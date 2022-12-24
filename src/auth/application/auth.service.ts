@@ -2,13 +2,14 @@ import {
   InternalServerErrorException,
   Injectable,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { genSalt, hash } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../../users';
-import { AuthRepository } from '../infrasturcture';
+import { AuthRepository, EmailService } from '../infrasturcture';
 import {
   UserRefreshTokenParams,
   UserRefreshTokenResult,
@@ -18,6 +19,8 @@ import {
   UserSignOutResult,
   UserSignUpParams,
   UserSignUpResult,
+  VerifyEmailParams,
+  VerifyEmailResult,
 } from './auth-service.types';
 import { JwtPayload, Roles } from '../core';
 import { ConfigService } from '@nestjs/config';
@@ -30,9 +33,10 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService<ConfigInterface>,
+    private readonly emailService: EmailService,
   ) {}
 
-  async signUp(params: UserSignUpParams): Promise<UserSignUpResult> {
+  async signUp(params: UserSignUpParams): Promise<void> {
     const { email, middleName, name, surname, password } = params;
 
     try {
@@ -45,18 +49,22 @@ export class AuthService {
 
       const hashedPassword = await this.hashPassword(password);
 
-      const tokens = await this.generateTokens({
-        id: data.id,
+      const auth = await this.authRepository.save({
+        password: hashedPassword,
+        user: data,
+      });
+
+      const redirectUri = await this.generateAuthViaEmailRedirectUri({
+        id: auth.id,
         role: Roles.User,
       });
 
-      await this.authRepository.save({
-        password: hashedPassword,
-        user: data,
-        refreshToken: tokens.refreshToken,
+      this.emailService.sendAuthMail({
+        email,
+        name,
+        surname,
+        redirectUri,
       });
-
-      return { data: tokens };
     } catch (error: any) {
       if (error instanceof QueryFailedError) {
         const { message } = error;
@@ -85,32 +93,36 @@ export class AuthService {
       },
     });
 
-    if (!userCreds) {
+    if (userCreds.isActivated) {
+      if (!userCreds) {
+        throw new BadRequestException('email or password is invalid');
+      }
+
+      const isCompared = await this.comparePasswords(
+        password,
+        userCreds.password,
+      );
+
+      if (isCompared) {
+        const tokens = await this.generateTokens({
+          id: userCreds.user.id,
+          role: Roles.User,
+        });
+
+        await this.authRepository.update(
+          { id: userCreds.id },
+          { refreshToken: tokens.refreshToken },
+        );
+
+        return {
+          data: tokens,
+        };
+      }
+
       throw new BadRequestException('email or password is invalid');
     }
 
-    const isCompared = await this.comparePasswords(
-      password,
-      userCreds.password,
-    );
-
-    if (isCompared) {
-      const tokens = await this.generateTokens({
-        id: userCreds.user.id,
-        role: Roles.User,
-      });
-
-      await this.authRepository.update(
-        { id: userCreds.id },
-        { refreshToken: tokens.refreshToken },
-      );
-
-      return {
-        data: tokens,
-      };
-    }
-
-    throw new BadRequestException('email or password is invalid');
+    throw new UnauthorizedException('email is not activated');
   }
 
   async signOut(params: UserSignOutParams): Promise<UserSignOutResult> {
@@ -173,6 +185,19 @@ export class AuthService {
     };
   }
 
+  async verifyEmail(params: VerifyEmailParams): Promise<VerifyEmailResult> {
+    const { token } = params;
+
+    const isVerified = await this.verifyTokenFromEmail(token);
+
+    if (isVerified) {
+      const { id } = isVerified;
+      await this.authRepository.update({ id }, { isActivated: true });
+    }
+
+    return;
+  }
+
   private async hashPassword(password: string) {
     const salt = await genSalt(8);
 
@@ -188,6 +213,37 @@ export class AuthService {
     const [salt, password] = hashedPassword.split('--');
 
     return (await hash(comparePassword, salt)) === password;
+  }
+
+  private async generateAuthViaEmailRedirectUri(
+    payload: JwtPayload,
+  ): Promise<string> {
+    const { host, port, protocol } = this.configService.get('app');
+    const { emailTokenExpiresIn, emailTokenSecretKey } =
+      this.configService.get('jwt');
+
+    const token = await this.jwtService.sign(payload, {
+      secret: emailTokenSecretKey,
+      expiresIn: emailTokenExpiresIn,
+    });
+
+    const redirectUri = `${protocol}://${host}:${port}/api/auth/verify?token=${token}`;
+
+    return redirectUri;
+  }
+
+  private async verifyTokenFromEmail(token: string) {
+    try {
+      const { emailTokenSecretKey } = this.configService.get('jwt');
+
+      const paylaod = await this.jwtService.verify<JwtPayload>(token, {
+        secret: emailTokenSecretKey,
+      });
+
+      return paylaod;
+    } catch (error: any) {
+      return null;
+    }
   }
 
   private async generateTokens(payload: JwtPayload): Promise<{

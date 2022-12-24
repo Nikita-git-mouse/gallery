@@ -29,3 +29,9 @@ export interface UserRefreshTokenParams {
 }
 
 export type UserRefreshTokenResult = UserSignUpResult;
+
+export interface VerifyEmailParams {
+  token: string;
+}
+
+export type VerifyEmailResult = undefined;

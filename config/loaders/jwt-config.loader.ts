@@ -9,5 +9,7 @@ export const loadJwtConfig = (): JwtConfigurationInterface => ({
     accessTokenSecretKey: process.env.ACCESS_TOKEN_SECRET_KEY,
     refreshTokenExpiresIn: Number(process.env.REFRESH_TOKEN_EXPIRES_IN),
     refreshTokenSecretKey: process.env.REFRESH_TOKEN_SECRET_KEY,
+    emailTokenExpiresIn: Number(process.env.EMAIL_TOKEN_EXPIRES_IN),
+    emailTokenSecretKey: process.env.EMAIL_TOKEN_SECRET_KEY,
   },
 });

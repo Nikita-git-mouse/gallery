@@ -4,5 +4,7 @@ export interface JwtConfigurationInterface {
     refreshTokenExpiresIn: number;
     accessTokenSecretKey: string;
     accessTokenExpiresIn: number;
+    emailTokenSecretKey: string;
+    emailTokenExpiresIn: number;
   };
 }

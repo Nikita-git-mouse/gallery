@@ -10,7 +10,6 @@ import { AuthModule } from './auth';
 import { UserEntity } from './users/infrasturcture/entities';
 import { AuthEntity } from './auth/infrasturcture/entities';
 import { JwtMiddleware } from './auth/infrasturcture';
-import { RefreshJwtMiddleware } from './auth/infrasturcture/middlewares/refresh-jwt.middleware';
 
 @Module({
   imports: [
@@ -44,6 +43,6 @@ import { RefreshJwtMiddleware } from './auth/infrasturcture/middlewares/refresh-
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware, RefreshJwtMiddleware).forRoutes('*');
+    consumer.apply(JwtMiddleware).forRoutes('*');
   }
 }
