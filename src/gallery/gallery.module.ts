@@ -7,5 +7,6 @@ import { GalleryRepository } from './infrasturcture';
   controllers: [GalleryController],
   providers: [GalleryService, GalleryRepository],
   imports: [],
+  exports: [GalleryService],
 })
-export class UsersModule {}
+export class GalleryModule {}

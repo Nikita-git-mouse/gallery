@@ -1,5 +1,7 @@
+import { IUser } from '../../../users';
 
 export interface IGallery {
-    id: number;
-    access: boolean;
+  id: number;
+  user: IUser;
+  access: boolean;
 }

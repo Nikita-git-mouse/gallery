@@ -1,9 +1,17 @@
-import {IGallery} from "../domain";
+import { IUser } from '../../users';
+import { IGallery } from '../domain';
 
 export interface CreateGalleryParams {
-    accsess: boolean;
+  access?: boolean;
+  user: IUser;
 }
 
-export interface  CreateGalleryResult {
-    data: IGallery;
+export interface CreateGalleryResult {
+  data: IGallery;
 }
+
+export interface ChangeGalleryAccessParams {
+  userId: number;
+}
+
+export type ChangeGalleryAccessResult = undefined;

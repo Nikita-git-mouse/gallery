@@ -1,17 +1,22 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IGallery } from '../../domain';
-import { UserEntity } from '../../../users/infrasturcture/entities' // ************
+import { UserEntity } from '../../../users/infrasturcture/entities'; // ************
 
-@Entity({name: 'gallery'})
+@Entity({ name: 'gallery' })
 export class GalleryEntity implements IGallery {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    // ************
-    @OneToOne(() => UserEntity, { cascade: true })
-    @JoinColumn()
-    user: UserEntity;
+  @OneToOne(() => UserEntity, { cascade: true })
+  @JoinColumn()
+  user: UserEntity;
 
-    @Column({default: true}) 
-    access: boolean;
+  @Column({ default: true })
+  access: boolean;
 }

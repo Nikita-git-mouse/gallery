@@ -1,33 +1,21 @@
-import { Body, Controller, Post, Get, Param } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Patch, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+
+import { AuthGuard } from '../../auth/infrasturcture';
 
 import { GalleryService } from '../application';
-import { GalleryDto } from './dto';
-import { CreateGalleryInput } from './inputs';
 
 @ApiTags('Контроллер галереи')
 @Controller('gallery')
 export class GalleryController {
-  constructor(private usersService: GalleryService) {}
+  constructor(private galleryService: GalleryService) {}
 
-//   @ApiOperation({ summary: 'Создание пользователя' })
-//   @ApiResponse({ type: UserDto })
-//   @Post()
-//   async create(@Body() input: CreateGalleryInput): Promise<any> {
-//     const { data } = await this.usersService.createUser(input);
+  @Patch()
+  @UseGuards(AuthGuard)
+  async changeAccess(@Req() request: Request) {
+    const { id } = request.user;
 
-//     return data;
-//   }
-
-//   @ApiOperation({ summary: 'Получение всех пользователей' })
-//   @ApiResponse({ isArray: true, type: Array<GalleryDto> })
-//   @Get()
-//   getAll() {
-//     return this.usersService.findAll();
-//   }
-
-//   @Get(':id')
-//   getOne(@Param('id') id: string) {
-//     return this.usersService.findOne(+id);
-//   }
-// }
+    return await this.galleryService.changeAccessPolicy({ userId: id });
+  }
+}

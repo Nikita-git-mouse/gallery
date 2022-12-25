@@ -3,13 +3,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 
-import { UsersModule } from './users';
 import { ConfigInterface, loaders } from '../config';
-import { PermissionsModule } from './permissions/permissions.module';
+import { JwtMiddleware } from './auth/infrasturcture';
+
+// import { PermissionsModule } from './permissions';
+import { UsersModule } from './users';
 import { AuthModule } from './auth';
+import { GalleryModule } from './gallery';
+
 import { UserEntity } from './users/infrasturcture/entities';
 import { AuthEntity } from './auth/infrasturcture/entities';
-import { JwtMiddleware } from './auth/infrasturcture';
+import { GalleryEntity } from './gallery/infrasturcture/entities';
 
 @Module({
   imports: [
@@ -27,7 +31,7 @@ import { JwtMiddleware } from './auth/infrasturcture';
           host,
           type: 'postgres',
           migrations: [],
-          entities: [UserEntity, AuthEntity],
+          entities: [UserEntity, AuthEntity, GalleryEntity],
           username,
           password,
         };
@@ -35,8 +39,9 @@ import { JwtMiddleware } from './auth/infrasturcture';
       inject: [ConfigService],
     }),
     UsersModule,
-    PermissionsModule,
+    // PermissionsModule,
     AuthModule,
+    GalleryModule,
     JwtModule,
   ],
   providers: [JwtMiddleware],
