@@ -1,3 +1,3 @@
-export * from './object.module';
+export * from './permissions.module';
 export * from './application';
 export * from './domain';

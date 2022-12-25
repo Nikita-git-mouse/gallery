@@ -14,6 +14,9 @@ import { GalleryModule } from './gallery';
 import { UserEntity } from './users/infrasturcture/entities';
 import { AuthEntity } from './auth/infrasturcture/entities';
 import { GalleryEntity } from './gallery/infrasturcture/entities';
+import { ObjectModule } from './objects';
+import { PermissionsGalleryModule } from './permissions/galleryPermission';
+import { PermissionsObjectModule } from './permissions/objectPermission';
 
 @Module({
   imports: [
@@ -43,6 +46,9 @@ import { GalleryEntity } from './gallery/infrasturcture/entities';
     AuthModule,
     GalleryModule,
     JwtModule,
+    ObjectModule,
+    PermissionsGalleryModule,
+    PermissionsObjectModule,
   ],
   providers: [JwtMiddleware],
 })

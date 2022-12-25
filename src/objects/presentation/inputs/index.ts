@@ -1,1 +1,1 @@
-export * from './create-user.input';
+export * from './add-object.input';
