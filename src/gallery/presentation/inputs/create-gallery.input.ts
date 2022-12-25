@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateUserInput {
+export class CreateGalleryInput {
   @ApiProperty({ example: 'user@mail.com', description: 'Email' })
   @IsString()
   @IsEmail()

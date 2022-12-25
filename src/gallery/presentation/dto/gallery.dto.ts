@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
 
-export class UserDto {
+export class GalleryDto {
 
 }
