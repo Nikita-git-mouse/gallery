@@ -1,9 +1,10 @@
-import { Controller, Patch, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { AuthGuard } from '../../auth/infrasturcture';
+import { IObject } from '../../objects';
 import { IUser } from '../../users';
 
 import { GalleryService } from '../application';
@@ -25,5 +26,12 @@ export class GalleryController {
   @OnEvent('user.created')
   async onUserCreated(payload: IUser) {
     await this.galleryService.createGallery({ user: payload });
+  }
+
+  @OnEvent('object.created')
+  async onObjectCreated(payload: { data: IObject; userId: number }) {
+    const { data, userId } = payload;
+
+    this.galleryService.associateObjectWithGallery({ object: data, userId });
   }
 }

@@ -13,6 +13,9 @@ export class ObjectEntity implements IObject {
   @Column({ nullable: false })
   name: string;
 
+  @Column({ default: true })
+  access: boolean;
+
   @Column({ nullable: false, unique: true })
   pathToFile: string;
 

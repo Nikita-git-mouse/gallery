@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { createReadStream } from 'fs';
 import { writeFile } from 'fs/promises';
-import { resolve } from 'path';
+import { extname, resolve } from 'path';
+import { v4 } from 'uuid';
+
 import { ConfigInterface } from '../../../../config';
 
 @Injectable()
@@ -14,11 +17,19 @@ export class FileStorageService {
     this.path = pathToDir;
   }
 
-  async saveFile(filename, ext: string, file: Buffer) {
-    await writeFile(resolve(this.path, `${filename}.${ext}`), file);
+  async saveFileViaBuffer(file: Express.Multer.File) {
+    const name = `${v4()}-${Date.now()}`;
+    const ext = extname(file.originalname);
+    const { buffer } = file;
+
+    const filename = `${name}${ext}`;
+
+    await writeFile(resolve(this.path, filename), buffer);
+
+    return { filename, extension: ext };
   }
 
   async createReadStreamFile(filename) {
-    await writeFile(resolve(this.path, `${filename}.${ext}`), file);
+    return createReadStream(resolve(this.path, filename));
   }
 }

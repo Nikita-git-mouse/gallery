@@ -21,7 +21,7 @@ export class AddObjectInput {
   @ApiProperty({ type: [Number], nullable: false })
   @Transform(({ value }) => value.split(',').map((num) => Number(num)))
   @IsNumber({}, { each: true })
-  baned: Array<number>;
+  banned: Array<number>;
 
   @ApiProperty({ type: [Number], nullable: false })
   @Transform(({ value }) => value.split(',').map((num) => Number(num)))

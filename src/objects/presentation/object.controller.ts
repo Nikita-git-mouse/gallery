@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -31,8 +33,23 @@ export class ObjectController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const { id } = request.user;
-    console.log(input, file, id);
+    console.log({ ...input, file, userId: id });
 
-    await this.objectService;
+    const { data } = await this.objectService.addObject({
+      ...input,
+      file,
+      userId: id,
+    });
+
+    return data;
+  }
+
+  @Get()
+  async getAllObjects(@Req() request: Request) {
+    const { id } = request.user;
+
+    const { data } = await this.objectService.getAllUserObjects({ userId: id });
+
+    return data;
   }
 }

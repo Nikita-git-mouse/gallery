@@ -1,3 +1,4 @@
+import { IObject } from '../../objects';
 import { IUser } from '../../users';
 import { IGallery } from '../domain';
 
@@ -15,3 +16,18 @@ export interface ChangeGalleryAccessParams {
 }
 
 export type ChangeGalleryAccessResult = undefined;
+
+export interface GetGalleryByUserIdParams {
+  userId: number;
+}
+
+export type GetGalleryByUserIdResult = {
+  data: IGallery;
+};
+
+export interface AssociateObjectWithGalleryParams {
+  object: IObject;
+  userId: number;
+}
+
+export type AssociateObjectWithGalleryResult = undefined;
