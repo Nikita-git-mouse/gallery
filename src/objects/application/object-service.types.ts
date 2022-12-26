@@ -1,12 +1,11 @@
-import path from "path";
-import {IObject} from "../domain";
+import path from 'path';
+import { IObject } from '../domain';
 
-export interface CreateObjectParams {
-    gallery: number;
-    file: any;
-    type: string;
+export interface AddObjectParams {
+  userId: number;
+  file: Express.Multer.File;
 }
 
-export interface  CreateObjectResult {
-    data: IObject;
+export interface AddObjectResult {
+  data: IObject;
 }

@@ -36,7 +36,7 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
-  async signUp(params: UserSignUpParams): Promise<void> {
+  async signUp(params: UserSignUpParams): Promise<UserSignUpResult> {
     const { email, middleName, name, surname, password } = params;
 
     try {
@@ -77,6 +77,8 @@ export class AuthService {
       console.log(error);
       throw new InternalServerErrorException('try again later');
     }
+
+    return;
   }
 
   async singIn(params: UserSignInParams): Promise<UserSignInResult> {

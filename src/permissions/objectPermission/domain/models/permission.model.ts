@@ -1,7 +1,5 @@
-
-import { IObject } from "src/objects";
-import { IUser } from "src/users";
-
+import { IObject } from 'src/objects';
+import { IUser } from 'src/users';
 
 export interface IPermission {
   id: number;

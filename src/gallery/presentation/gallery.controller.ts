@@ -1,12 +1,15 @@
 import { Controller, Patch, Req, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { OnEvent } from '@nestjs/event-emitter';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { AuthGuard } from '../../auth/infrasturcture';
+import { IUser } from '../../users';
 
 import { GalleryService } from '../application';
 
 @ApiTags('Контроллер галереи')
+@ApiBearerAuth()
 @Controller('gallery')
 export class GalleryController {
   constructor(private galleryService: GalleryService) {}
@@ -17,5 +20,10 @@ export class GalleryController {
     const { id } = request.user;
 
     return await this.galleryService.changeAccessPolicy({ userId: id });
+  }
+
+  @OnEvent('user.created')
+  async onUserCreated(payload: IUser) {
+    await this.galleryService.createGallery({ user: payload });
   }
 }

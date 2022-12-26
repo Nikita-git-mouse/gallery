@@ -1,15 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import path from 'path';
+import { Transform } from 'class-transformer';
 
-export class CreateObjectInput {
-  @ApiProperty({ example: '', description: 'Файл для помещения в галерею' })
-  @IsNotEmpty()
-  readonly file: any;
+import {
+  Contains,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
-  @ApiProperty({ example: 'video/photo', description: 'Тип файла' })
+export class AddObjectInput {
+  @ApiProperty({ type: Boolean, nullable: false })
+  @Transform(({ value }) => {
+    return Boolean(value === 'true');
+  })
+  @IsBoolean()
+  access: boolean;
+
+  @ApiProperty({ type: [Number], nullable: false })
+  @Transform(({ value }) => value.split(',').map((num) => Number(num)))
+  @IsNumber({}, { each: true })
+  baned: Array<number>;
+
+  @ApiProperty({ type: [Number], nullable: false })
+  @Transform(({ value }) => value.split(',').map((num) => Number(num)))
+  @IsNumber({}, { each: true })
+  accessed: Array<number>;
+
+  @ApiProperty({ type: String, nullable: false })
   @IsString()
-  @IsNotEmpty()
-  readonly type: string;
-  
+  fileName: string;
+
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  object: Express.Multer.File;
 }

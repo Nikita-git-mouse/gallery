@@ -1,33 +1,38 @@
-import { Body, Controller, Post, Get, Param } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
+import { AuthGuard } from '../../auth/infrasturcture';
 import { ObjectService } from '../application';
-import { ObjectDto } from './dto';
-import { CreateObjectInput } from './inputs';
+import { AddObjectInput } from './inputs';
 
 @ApiTags('Контроллер файлов для помещения в галарею')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('objects')
 export class ObjectController {
   constructor(private objectService: ObjectService) {}
 
-  @ApiOperation({ summary: 'Создание нового файла' })
-  @ApiResponse({ type: ObjectDto })
   @Post()
-  async create(@Body() input: CreateObjectInput): Promise<ObjectDto> {
-    const { data } = await this.objectService.createUser(input);
+  @UseInterceptors(FileInterceptor('object'))
+  @ApiConsumes('multipart/form-data')
+  async addNewObject(
+    @Req() request: Request,
+    @Body() input: AddObjectInput,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const { id } = request.user;
+    console.log(input, file, id);
 
-    return data;
+    await this.objectService;
   }
-
-  // @ApiOperation({ summary: 'Получение всех файлов пользователя' })
-  // @ApiResponse({ isArray: true, type: Array<ObjectDto> })
-  // @Get()
-  // getAll() {
-  //   return this.usersService.findAll();
-  // }
-
-  // @Get(':id')
-  // getOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
 }

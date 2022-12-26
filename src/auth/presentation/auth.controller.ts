@@ -22,15 +22,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/sign-up')
-  async singUp(
-    @Body() input: UserSignUpInput,
-    @Res({ passthrough: true }) response: Response,
-  ) {
+  async singUp(@Body() input: UserSignUpInput) {
     await this.authService.signUp(input);
-
-    // const { accessToken, refreshToken } = data;
-
-    // this.setRefreshToken(response, refreshToken);
   }
 
   @ApiExcludeEndpoint()

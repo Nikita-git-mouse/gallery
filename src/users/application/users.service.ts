@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
-import { GalleryService } from '../../gallery';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { UserRepository } from '../infrasturcture/repositories';
 import { CreateUserParams, CreateUserResult } from './users-service.types';
@@ -9,7 +8,7 @@ import { CreateUserParams, CreateUserResult } from './users-service.types';
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
-    private readonly galleryService: GalleryService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createUser(params: CreateUserParams): Promise<CreateUserResult> {
@@ -17,12 +16,10 @@ export class UsersService {
       ...params,
     });
 
-    const userGallery = await this.galleryService.createGallery({
-      user: newUser,
-      access: false,
-    });
-
     const user = await this.usersRepository.save(newUser);
+
+    this.eventEmitter.emit('user.created', user);
+
     return {
       data: user,
     };

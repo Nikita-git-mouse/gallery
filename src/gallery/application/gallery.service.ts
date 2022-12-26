@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { FileStorageService } from '../../objects/infrasturcture';
 import { GalleryRepository } from '../infrasturcture/repositories';
 
 import {
@@ -10,13 +11,17 @@ import {
 
 @Injectable()
 export class GalleryService {
-  constructor(private readonly galleryRepository: GalleryRepository) {}
+  constructor(
+    private readonly galleryRepository: GalleryRepository,
+    private readonly fileStorageService: FileStorageService,
+  ) {}
 
   async createGallery(
     params: CreateGalleryParams,
   ): Promise<CreateGalleryResult> {
     const newGallery = this.galleryRepository.create({
       ...params,
+      objects: [],
     });
 
     const gallery = await this.galleryRepository.save(newGallery);

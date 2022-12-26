@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ObjectController } from './presentation';
 import { ObjectService } from './application';
-import { ObjectRepository } from './infrasturcture';
+import { FileStorageService, ObjectRepository } from './infrasturcture';
 
 @Module({
   controllers: [ObjectController],
-  providers: [ObjectService, ObjectRepository],
+  providers: [ObjectService, ObjectRepository, FileStorageService],
   imports: [],
-  exports: [ObjectService]
+  exports: [ObjectService],
 })
 export class ObjectModule {}

@@ -2,21 +2,20 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ConfigInterface, loaders } from '../config';
 import { JwtMiddleware } from './auth/infrasturcture';
 
-// import { PermissionsModule } from './permissions';
 import { UsersModule } from './users';
 import { AuthModule } from './auth';
 import { GalleryModule } from './gallery';
+import { ObjectModule } from './objects';
 
 import { UserEntity } from './users/infrasturcture/entities';
 import { AuthEntity } from './auth/infrasturcture/entities';
 import { GalleryEntity } from './gallery/infrasturcture/entities';
-import { ObjectModule } from './objects';
-import { PermissionsGalleryModule } from './permissions/galleryPermission';
-import { PermissionsObjectModule } from './permissions/objectPermission';
+import { ObjectEntity } from './objects/infrasturcture/entities';
 
 @Module({
   imports: [
@@ -34,21 +33,24 @@ import { PermissionsObjectModule } from './permissions/objectPermission';
           host,
           type: 'postgres',
           migrations: [],
-          entities: [UserEntity, AuthEntity, GalleryEntity],
+          entities: [UserEntity, AuthEntity, GalleryEntity, ObjectEntity],
           username,
           password,
         };
       },
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot({
+      global: true,
+      newListener: true,
+      removeListener: true,
+      verboseMemoryLeak: true,
+    }),
     UsersModule,
-    // PermissionsModule,
+    ObjectModule,
     AuthModule,
     GalleryModule,
     JwtModule,
-    ObjectModule,
-    PermissionsGalleryModule,
-    PermissionsObjectModule,
   ],
   providers: [JwtMiddleware],
 })

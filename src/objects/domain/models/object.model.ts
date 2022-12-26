@@ -1,8 +1,9 @@
-import { IGallery } from "src/gallery";
+import { IGallery } from 'src/gallery';
 
 export interface IObject {
-    id: number;
-    gallery: IGallery;
-    file: any;
-    type: string;
+  id: number;
+  gallery: IGallery;
+  pathToFile: string;
+  type: string;
+  name: string;
 }
