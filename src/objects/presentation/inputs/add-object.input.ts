@@ -1,14 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
-import {
-  Contains,
-  IsArray,
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 export class AddObjectInput {
   @ApiProperty({ type: Boolean, nullable: false })
@@ -17,16 +10,6 @@ export class AddObjectInput {
   })
   @IsBoolean()
   access: boolean;
-
-  @ApiProperty({ type: [Number], nullable: false })
-  @Transform(({ value }) => value.split(',').map((num) => Number(num)))
-  @IsNumber({}, { each: true })
-  banned: Array<number>;
-
-  @ApiProperty({ type: [Number], nullable: false })
-  @Transform(({ value }) => value.split(',').map((num) => Number(num)))
-  @IsNumber({}, { each: true })
-  accessed: Array<number>;
 
   @ApiProperty({ type: String, nullable: false })
   @IsString()

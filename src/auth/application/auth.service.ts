@@ -95,11 +95,11 @@ export class AuthService {
       },
     });
 
-    if (userCreds.isActivated) {
-      if (!userCreds) {
-        throw new BadRequestException('email or password is invalid');
-      }
+    if (!userCreds) {
+      throw new BadRequestException('email or password is invalid');
+    }
 
+    if (userCreds.isActivated) {
       const isCompared = await this.comparePasswords(
         password,
         userCreds.password,

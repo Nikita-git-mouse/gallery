@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createReadStream } from 'fs';
-import { writeFile } from 'fs/promises';
+import { writeFile, rm } from 'fs/promises';
 import { extname, resolve } from 'path';
 import { v4 } from 'uuid';
 
@@ -27,6 +27,10 @@ export class FileStorageService {
     await writeFile(resolve(this.path, filename), buffer);
 
     return { filename, extension: ext };
+  }
+
+  async deleteFile(filename: string) {
+    await rm(resolve(this.path, filename), { force: true });
   }
 
   async createReadStreamFile(filename) {

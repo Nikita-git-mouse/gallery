@@ -9,18 +9,28 @@ import { IUser } from '../../users';
 
 import { GalleryService } from '../application';
 
-@ApiTags('Контроллер галереи')
+@ApiTags('Gallery')
 @ApiBearerAuth()
 @Controller('gallery')
 export class GalleryController {
   constructor(private galleryService: GalleryService) {}
 
-  @Patch()
+  @Patch('/change-access')
   @UseGuards(AuthGuard)
   async changeAccess(@Req() request: Request) {
     const { id } = request.user;
 
     return await this.galleryService.changeAccessPolicy({ userId: id });
+  }
+
+  @Get()
+  @UseGuards(AuthGuard)
+  async getGalleryInfo(@Req() request: Request) {
+    const { id } = request.user;
+
+    const { data } = await this.galleryService.getGalleryInfo({ userId: id });
+
+    return data;
   }
 
   @OnEvent('user.created')

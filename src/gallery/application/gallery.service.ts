@@ -66,6 +66,22 @@ export class GalleryService {
     return undefined;
   }
 
+  async getGalleryInfo(
+    params: GetGalleryByUserIdParams,
+  ): Promise<GetGalleryByUserIdResult> {
+    const { userId } = params;
+
+    const userGallery = await this.galleryRepository.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    return { data: userGallery };
+  }
+
   async getByUserId(
     params: GetGalleryByUserIdParams,
   ): Promise<GetGalleryByUserIdResult> {

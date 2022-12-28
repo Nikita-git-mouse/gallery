@@ -16,7 +16,7 @@ import { REFRESH_TOKEN_COOKIE_NAME_TOKEN } from '../core';
 import { RefreshTokenGuard } from '../infrasturcture/guards/refresh-token.guard';
 import { UserSignInInput, UserSignUpInput } from './inputs';
 
-@ApiTags('Контроллер авторизации')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

@@ -11,11 +11,16 @@ import { UsersModule } from './users';
 import { AuthModule } from './auth';
 import { GalleryModule } from './gallery';
 import { ObjectModule } from './objects';
+import { PermissionModule } from './permissions';
 
 import { UserEntity } from './users/infrasturcture/entities';
 import { AuthEntity } from './auth/infrasturcture/entities';
 import { GalleryEntity } from './gallery/infrasturcture/entities';
 import { ObjectEntity } from './objects/infrasturcture/entities';
+import {
+  GalleryPermissionEntity,
+  ObjectPermissionEntity,
+} from './permissions/infrastructure/entities';
 
 @Module({
   imports: [
@@ -33,7 +38,14 @@ import { ObjectEntity } from './objects/infrasturcture/entities';
           host,
           type: 'postgres',
           migrations: [],
-          entities: [UserEntity, AuthEntity, GalleryEntity, ObjectEntity],
+          entities: [
+            UserEntity,
+            AuthEntity,
+            GalleryEntity,
+            ObjectEntity,
+            ObjectPermissionEntity,
+            GalleryPermissionEntity,
+          ],
           username,
           password,
         };
@@ -47,6 +59,7 @@ import { ObjectEntity } from './objects/infrasturcture/entities';
       verboseMemoryLeak: true,
     }),
     UsersModule,
+    PermissionModule,
     ObjectModule,
     AuthModule,
     GalleryModule,
