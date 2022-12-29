@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IObject } from '../../domain';
 import { GalleryEntity } from '../../../gallery/infrasturcture/entities';
 
-@Entity({ name: 'gallery' })
+@Entity()
 export class ObjectEntity implements IObject {
   @PrimaryGeneratedColumn()
   id: number;
