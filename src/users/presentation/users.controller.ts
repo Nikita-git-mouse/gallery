@@ -9,16 +9,7 @@ import { UpdateUserInput } from './inputs';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
-
-  @Get()
-  async gutUserInfo(@Req() request: Request) {
-    const { id } = request.user;
-
-    const { data } = await this.usersService.getById({ userId: id });
-
-    return data;
-  }
-
+  
   @Get('/:userId')
   async getUserById(@Param('userId') userId: string) {
     const { data } = await this.usersService.getById({ userId: +userId });
@@ -35,6 +26,12 @@ export class UsersController {
       ...input,
     });
 
+    return data;
+  }
+
+  @Get('/:name/username')
+  async getUserByName(@Param('name') name: string) {
+    const { data } = await this.usersService.getByName({ name: name })
     return data;
   }
 }
