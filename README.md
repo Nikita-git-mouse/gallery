@@ -34,7 +34,10 @@ $ sudo docker-compose up
 ```
 yarn run start:dev
 ```
-
+4. Open documentation after start server
+```
+https://127.0.0.1:3000/docs
+```
 ## Database
 Main entities:
 * Users

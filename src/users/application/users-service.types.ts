@@ -8,6 +8,10 @@ export interface CreateUserResult {
 
 export interface GetUserByIdParams {
   userId: number;
+
+}
+export interface GetUserByNameParams {
+  name: string;
 }
 
 export interface GetUserByIdResult {

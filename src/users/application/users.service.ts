@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { UserRepository } from '../infrasturcture/repositories';
 import {
+  GetUserByNameParams,
   CreateUserParams,
   CreateUserResult,
   GetUserByIdParams,
@@ -73,5 +74,19 @@ export class UsersService {
     return {
       data: user,
     };
+  }
+
+  async getByName(params:GetUserByNameParams):Promise<GetUserByIdResult> {
+    const { name } = params;
+
+    const user = await this.usersRepository.findOne({ where: { name: name } });
+    if (!user) {
+      throw new BadRequestException(`user with name <${name}> not found`);
+    }
+
+    return {
+      data: user,
+    };
+    
   }
 }
